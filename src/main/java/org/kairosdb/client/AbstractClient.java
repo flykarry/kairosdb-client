@@ -38,9 +38,9 @@ public abstract class AbstractClient implements Client {
      * @param url url to the KairosDB server
      * @throws MalformedURLException if url is malformed
      */
-    protected AbstractClient(String url) throws MalformedURLException {
+    protected AbstractClient(String url) {
         this.url = checkNotNullOrEmpty(url);
-        new URL(url); // validate url
+//        new URL(url); // validate url  //去掉校验url
 
     }
 
