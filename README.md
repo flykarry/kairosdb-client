@@ -1,6 +1,8 @@
 优化
-1： 采用HTTP连接池方式访问数据库，配置方式参考 /test/resources/spring-customclient.xml
-2.  采用静态json序列化对象代替每次新建MetricBuilder或QueryBuilder创建的json序列化对象
+1. 添加http连接池支持，可以配置连接数,配置方式参考 /test/resources/spring-customclient.xml
+2. 提出Json序列化为静态方法，代替每次新建MetricBuilder或QueryBuilder创建的json序列化对象
+3. 去掉通过创建url对象进行的url校验
+4. 更新所有jar包
 
 KairosDB Client
 ================
