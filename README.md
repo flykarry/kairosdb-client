@@ -1,3 +1,7 @@
+优化
+1： 采用HTTP连接池方式访问数据库，配置方式参考 /test/resources/spring-customclient.xml
+2.  采用静态json序列化对象代替每次新建MetricBuilder或QueryBuilder创建的json序列化对象
+
 KairosDB Client
 ================
 [![Build Status](https://travis-ci.org/kairosdb/kairosdb-client.svg?branch=develop)](https://travis-ci.org/kairosdb/kairosdb-client)

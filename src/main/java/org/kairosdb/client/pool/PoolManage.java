@@ -4,6 +4,10 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+
 /**
  * 线程池管理
  * Created by gaojun on 2018/2/1.
@@ -18,6 +22,14 @@ public class PoolManage {
 
     private PoolManage() {
         clientBuilder.setConnectionManager(connectionManager);
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                connectionManager.closeExpiredConnections();
+                connectionManager.closeIdleConnections(2, TimeUnit.MINUTES);
+            }
+        }, 1000*60, 1000*60);
     }
 
     public static PoolManage getInstance() {

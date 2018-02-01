@@ -6,7 +6,6 @@ import com.google.gson.JsonSyntaxException;
 import org.junit.Before;
 import org.junit.Test;
 import org.kairosdb.client.DataPointTypeRegistry;
-import org.kairosdb.client.JsonMapper;
 import org.kairosdb.client.builder.DataFormatException;
 
 import java.io.ByteArrayInputStream;
@@ -20,18 +19,11 @@ import static org.junit.Assert.assertThat;
 public class QueryResponseTest
 {
 
-	private JsonMapper mapper;
-
-	@Before
-	public void setup()
-	{
-		mapper = new JsonMapper(new DataPointTypeRegistry());
-	}
 
 	@Test(expected = NullPointerException.class)
 	public void testConstructorNullMapperInvalid() throws IOException
 	{
-		new QueryResponse(null, 200, new ByteArrayInputStream("bogus".getBytes()));
+		new QueryResponse( 200, new ByteArrayInputStream("bogus".getBytes()));
 	}
 
 	@Test
@@ -40,7 +32,7 @@ public class QueryResponseTest
 		String json = Resources.toString(Resources.getResource("response_valid.json"), Charsets.UTF_8);
 		json = json.replaceAll(System.getProperty("line.separator"), ""); // remove newlines so strings can compare
 
-		QueryResponse response = new QueryResponse(mapper, 200, new ByteArrayInputStream(json.getBytes()));
+		QueryResponse response = new QueryResponse( 200, new ByteArrayInputStream(json.getBytes()));
 
 		assertThat(response.getBody(), equalTo(json));
 		assertThat(response.getStatusCode(), equalTo(200));
@@ -52,7 +44,7 @@ public class QueryResponseTest
 	{
 		String json = "{\"errors\":[\"query.start_time relative or absolute time must be set\"]}";
 
-		QueryResponse response = new QueryResponse(mapper, 400, new ByteArrayInputStream(json.getBytes()));
+		QueryResponse response = new QueryResponse( 400, new ByteArrayInputStream(json.getBytes()));
 
 		assertThat(response.getBody(), equalTo(json));
 		assertThat(response.getStatusCode(), equalTo(400));
@@ -65,7 +57,7 @@ public class QueryResponseTest
 	{
 		String json = "{\"errors\":[\"query.start_time relative or absolute time must be set\"]}";
 
-		QueryResponse response = new QueryResponse(mapper, 400, new ByteArrayInputStream(json.getBytes()));
+		QueryResponse response = new QueryResponse( 400, new ByteArrayInputStream(json.getBytes()));
 
 		assertThat(response.getQueries(), equalTo(Collections.<Query>emptyList()));
 		assertThat(response.getBody(), equalTo(json));
@@ -80,7 +72,7 @@ public class QueryResponseTest
 		String json = Resources.toString(Resources.getResource("response_valid.json"), Charsets.UTF_8);
 		json = json.replaceAll(System.getProperty("line.separator"), ""); // remove newlines so strings can compare
 
-		QueryResponse response = new QueryResponse(mapper, 200, new ByteArrayInputStream(json.getBytes()));
+		QueryResponse response = new QueryResponse( 200, new ByteArrayInputStream(json.getBytes()));
 
 		List<Query> queries = response.getQueries();
 		assertThat(response.getBody(), equalTo(json));
@@ -99,7 +91,7 @@ public class QueryResponseTest
 	{
 		String responseBody = "Not JSON";
 
-		new QueryResponse(mapper, 400, new ByteArrayInputStream(responseBody.getBytes()));
+		new QueryResponse( 400, new ByteArrayInputStream(responseBody.getBytes()));
 	}
 
 	@Test(expected = JsonSyntaxException.class)
@@ -107,7 +99,7 @@ public class QueryResponseTest
 	{
 		String responseBody = "Not JSON";
 
-		new QueryResponse(mapper, 500, new ByteArrayInputStream(responseBody.getBytes()));
+		new QueryResponse( 500, new ByteArrayInputStream(responseBody.getBytes()));
 	}
 
 	@Test(expected = JsonSyntaxException.class)
@@ -115,7 +107,7 @@ public class QueryResponseTest
 	{
 		String responseBody = "Not JSON";
 
-		new QueryResponse(mapper, 200, new ByteArrayInputStream(responseBody.getBytes()));
+		new QueryResponse( 200, new ByteArrayInputStream(responseBody.getBytes()));
 	}
 
 	/**
@@ -126,7 +118,7 @@ public class QueryResponseTest
 	{
 		String responseBody = "Not JSON";
 
-		QueryResponse response = new QueryResponse(mapper, 300, new ByteArrayInputStream(responseBody.getBytes()));
+		QueryResponse response = new QueryResponse( 300, new ByteArrayInputStream(responseBody.getBytes()));
 
 		assertThat(response.getQueries(), equalTo(Collections.<Query>emptyList()));
 		assertThat(response.getBody(), equalTo(responseBody));
