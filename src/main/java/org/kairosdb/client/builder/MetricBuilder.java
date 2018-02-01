@@ -22,6 +22,7 @@ import org.kairosdb.client.builder.grouper.CustomGrouper;
 import org.kairosdb.client.serializer.CustomAggregatorSerializer;
 import org.kairosdb.client.serializer.CustomGrouperSerializer;
 import org.kairosdb.client.serializer.DataPointSerializer;
+import org.kairosdb.client.util.JsonUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,97 +33,86 @@ import static com.google.common.base.Preconditions.checkState;
 /**
  * Builder used to create the JSON to push metrics to KairosDB.
  */
-public class MetricBuilder
-{
-	private List<Metric> metrics = new ArrayList<Metric>();
-	private transient Gson mapper;
-	private boolean useCompression = false;
+public class MetricBuilder {
+    private List<Metric> metrics = new ArrayList<Metric>();
+    private boolean useCompression = false;
 
-	private MetricBuilder()
-	{
-		GsonBuilder builder = new GsonBuilder();
-		builder.registerTypeAdapter(CustomAggregator.class, new CustomAggregatorSerializer());
-		builder.registerTypeAdapter(CustomGrouper.class, new CustomGrouperSerializer());
-		builder.registerTypeAdapter(DataPoint.class, new DataPointSerializer());
-		mapper = builder.create();
-	}
+    private MetricBuilder() {
+    }
 
-	/**
-	 * Returns a new metric builder.
-	 *
-	 * @return metric builder
-	 */
-	public static MetricBuilder getInstance()
-	{
-		return new MetricBuilder();
-	}
+    /**
+     * Returns a new metric builder.
+     *
+     * @return metric builder
+     */
+    public static MetricBuilder getInstance() {
+        return new MetricBuilder();
+    }
 
-	/**
-	 * Adds a metric to the builder.
-	 *
-	 * @param metricName metric name
-	 * @return the new metric
-	 */
-	public Metric addMetric(String metricName)
-	{
-		Metric metric = new Metric(metricName);
-		metrics.add(metric);
-		return metric;
-	}
+    /**
+     * Adds a metric to the builder.
+     *
+     * @param metricName metric name
+     * @return the new metric
+     */
+    public Metric addMetric(String metricName) {
+        Metric metric = new Metric(metricName);
+        metrics.add(metric);
+        return metric;
+    }
 
-	/**
-	 * Adds a metric to the builder with a customer type.
-	 *
-	 * @param metricName    metric name
-	 * @param registeredType type used to deserialize the json on the server
-	 * @return the new metric
-	 */
-	public Metric addMetric(String metricName, String registeredType)
-	{
-		Metric metric = new Metric(metricName, registeredType);
-		metrics.add(metric);
-		return metric;
-	}
+    /**
+     * Adds a metric to the builder with a customer type.
+     *
+     * @param metricName     metric name
+     * @param registeredType type used to deserialize the json on the server
+     * @return the new metric
+     */
+    public Metric addMetric(String metricName, String registeredType) {
+        Metric metric = new Metric(metricName, registeredType);
+        metrics.add(metric);
+        return metric;
+    }
 
-	/**
-	 * Returns a list of metrics added to the builder.
-	 *
-	 * @return list of metrics
-	 */
-	public List<Metric> getMetrics()
-	{
-		return metrics;
-	}
+    /**
+     * Returns a list of metrics added to the builder.
+     *
+     * @return list of metrics
+     */
+    public List<Metric> getMetrics() {
+        return metrics;
+    }
 
-	/**
-	 * Sets the compression flag for http post.
-	 * @param compressionEnabled
-	 */
-	public void setCompression(boolean compressionEnabled)
-	{
-		useCompression = compressionEnabled;
-		return;
-	}
+    /**
+     * Sets the compression flag for http post.
+     *
+     * @param compressionEnabled
+     */
+    public void setCompression(boolean compressionEnabled) {
+        useCompression = compressionEnabled;
+        return;
+    }
 
-	/**
-	 * Returns the compression flag
-	 * @return
-	 */
-	public boolean isCompressionEnabled() { return useCompression; }
+    /**
+     * Returns the compression flag
+     *
+     * @return
+     */
+    public boolean isCompressionEnabled() {
+        return useCompression;
+    }
 
-	/**
-	 * Returns the JSON string built by the builder. This is the JSON that can be used by the client add metrics.
-	 *
-	 * @return JSON
-	 * @throws IOException if metrics cannot be converted to JSON
-	 */
-	public String build() throws IOException
-	{
-		for (Metric metric : metrics)
-		{
-			// verify that there is at least one tag for each metric
-			checkState(metric.getTags().size() > 0, metric.getName() + " must contain at least one tag.");
-		}
-		return mapper.toJson(metrics);
-	}
+    /**
+     * Returns the JSON string built by the builder. This is the JSON that can be used by the client add metrics.
+     *
+     * @return JSON
+     * @throws IOException if metrics cannot be converted to JSON
+     */
+    public String build() throws IOException {
+        for (Metric metric : metrics) {
+            // verify that there is at least one tag for each metric
+            checkState(metric.getTags().size() > 0, metric.getName() + " must contain at least one tag.");
+        }
+        return JsonUtils.toJson(metrics);
+    }
 }

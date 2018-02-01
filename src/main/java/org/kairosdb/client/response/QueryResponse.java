@@ -16,7 +16,7 @@
 package org.kairosdb.client.response;
 
 import com.google.gson.JsonSyntaxException;
-import org.kairosdb.client.JsonMapper;
+import org.kairosdb.client.util.JsonUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,17 +32,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class QueryResponse extends Response
 {
 	private final int responseCode;
-	private final JsonMapper mapper;
 	private final Object queriesMapLock = new Object();
 
 	private Map<String, Query> queriesMap = null;
 	private List<Query> queries;
 	private String body;
 
-	public QueryResponse(JsonMapper mapper, int responseCode, InputStream stream) throws IOException
+	public QueryResponse( int responseCode, InputStream stream) throws IOException
 	{
 		super(responseCode);
-		this.mapper = checkNotNull(mapper, "mapper cannot be null");
 		this.responseCode = responseCode;
 		this.body = getBody(stream);
 		this.queries = getQueries();
@@ -66,13 +64,13 @@ public class QueryResponse extends Response
 			// We only get JSON if the response is a 200, 400 or 500 error
 			if (responseCode == 400 || responseCode == 500)
 			{
-				ErrorResponse errorResponse = mapper.fromJson(body, ErrorResponse.class);
+				ErrorResponse errorResponse = JsonUtils.fromJson(body, ErrorResponse.class);
 				addErrors(errorResponse.getErrors());
 				return Collections.emptyList();
 			}
 			else if (responseCode == 200)
 			{
-				KairosQueryResponse response = mapper.fromJson(body, KairosQueryResponse.class);
+				KairosQueryResponse response = JsonUtils.fromJson(body, KairosQueryResponse.class);
 				return response.getQueries();
 			}
 		}

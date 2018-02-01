@@ -33,14 +33,6 @@ public class QueryTagBuilder extends AbstractQueryBuilder<QueryTagBuilder>
 		super();
 	}
 
-	@Override
-	protected Gson buildGson()
-	{
-		GsonBuilder builder = new GsonBuilder();
-		builder.registerTypeAdapter(ListMultimap.class, new ListMultiMapSerializer());
-		return builder.create();
-	}
-
 	/**
 	 * Returns a new query tag builder.
 	 *

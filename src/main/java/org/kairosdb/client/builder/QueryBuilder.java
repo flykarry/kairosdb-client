@@ -45,19 +45,6 @@ public class QueryBuilder extends AbstractQueryBuilder<QueryBuilder>
 		super();
 	}
 
-	@Override
-	protected Gson buildGson()
-	{
-		GsonBuilder builder = new GsonBuilder();
-		builder.registerTypeAdapter(CustomAggregator.class, new CustomAggregatorSerializer());
-		builder.registerTypeAdapter(CustomGrouper.class, new CustomGrouperSerializer());
-		builder.registerTypeAdapter(ListMultimap.class, new ListMultiMapSerializer());
-		builder.registerTypeAdapter(QueryMetric.Order.class, new OrderSerializer());
-		builder.registerTypeAdapter(TimeZone.class, new TimeZoneSerializer());
-
-		return builder.create();
-	}
-
 	/**
 	 * How long to cache this exact query. The default is to never cache.
 	 *
