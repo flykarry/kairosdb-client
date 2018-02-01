@@ -29,7 +29,7 @@ public class PoolManage {
                 connectionManager.closeExpiredConnections();
                 connectionManager.closeIdleConnections(2, TimeUnit.MINUTES);
             }
-        }, 1000*60, 1000*60);
+        }, 1000 * 60, 1000 * 60);
     }
 
     public static PoolManage getInstance() {
