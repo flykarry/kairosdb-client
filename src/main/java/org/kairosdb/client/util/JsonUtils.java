@@ -30,12 +30,12 @@ public class JsonUtils {
         builder.registerTypeAdapter(CustomAggregator.class, new CustomAggregatorSerializer());
         builder.registerTypeAdapter(CustomGrouper.class, new CustomGrouperSerializer());
         builder.registerTypeAdapter(DataPoint.class, new DataPointSerializer());
-//        builder.registerTypeAdapter(ListMultimap.class, new ListMultiMapSerializer());
-//        builder.registerTypeAdapter(QueryMetric.Order.class, new OrderSerializer());
-//        builder.registerTypeAdapter(TimeZone.class, new TimeZoneSerializer());
-//
-//        builder.registerTypeAdapter(GroupResult.class, new GroupByDeserializer());
-//        builder.registerTypeAdapter(Result.class, new ResultsDeserializer(new DataPointTypeRegistry()));
+        builder.registerTypeAdapter(ListMultimap.class, new ListMultiMapSerializer());
+        builder.registerTypeAdapter(QueryMetric.Order.class, new OrderSerializer());
+        builder.registerTypeAdapter(TimeZone.class, new TimeZoneSerializer());
+
+        builder.registerTypeAdapter(GroupResult.class, new GroupByDeserializer());
+        builder.registerTypeAdapter(Result.class, new ResultsDeserializer(new DataPointTypeRegistry()));
         mapper = builder.create();
     }
 
