@@ -3,6 +3,7 @@
 2. 提出Json序列化为静态方法，代替每次新建MetricBuilder或QueryBuilder创建的json序列化对象
 3. 去掉通过创建url对象进行的url校验
 4. 更新所有jar包
+5. 若没有查到数据则getQuery方法返回null
 
 KairosDB Client
 ================
