@@ -65,6 +65,17 @@ public class QueryTagResponse extends Response
 	}
 
 	/**
+	 * 对于单个查询，直接返回单个Query结果
+	 * @return
+	 */
+	public TagQuery getSingleTagQuery() {
+		if (results != null && results.size() > 0) {
+			return results.get(0);
+		}
+		return null;
+	}
+
+	/**
 	 * Returns the body response as a string.
 	 *
 	 * @return body as a string or empty string.
