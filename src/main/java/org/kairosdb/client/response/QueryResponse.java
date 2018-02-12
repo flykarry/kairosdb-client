@@ -66,7 +66,7 @@ public class QueryResponse extends Response
 			{
 				ErrorResponse errorResponse = JsonUtils.fromJson(body, ErrorResponse.class);
 				addErrors(errorResponse.getErrors());
-				return Collections.emptyList();
+				return null;
 			}
 			else if (responseCode == 200)
 			{
@@ -75,7 +75,7 @@ public class QueryResponse extends Response
 			}
 		}
 
-		return Collections.emptyList();
+		return null;
 	}
 
 	/**
