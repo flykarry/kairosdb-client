@@ -29,120 +29,112 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Response returned by KairosDB.
  */
-public class QueryResponse extends Response
-{
-	private final int responseCode;
-	private final Object queriesMapLock = new Object();
+public class QueryResponse extends Response {
+    private final int responseCode;
+    private final Object queriesMapLock = new Object();
 
-	private Map<String, Query> queriesMap = null;
-	private List<Query> queries;
-	private String body;
+    private Map<String, Query> queriesMap = null;
+    private List<Query> queries;
+    private String body;
 
-	public QueryResponse( int responseCode, InputStream stream) throws IOException
-	{
-		super(responseCode);
-		this.responseCode = responseCode;
-		this.body = getBody(stream);
-		this.queries = getQueries();
-	}
+    public QueryResponse(int responseCode, InputStream stream) throws IOException {
+        super(responseCode);
+        this.responseCode = responseCode;
+        this.body = getBody(stream);
+        this.queries = getQueries();
+    }
 
-	/**
-	 * Returns a list of query results returned by KairosDB. If status code is not
-	 * successful, call getErrors to get errors returned.
-	 *
-	 * @return list of query results or empty list of no data or if an error is returned.
-	 * @throws IOException         if could not map response to Queries object
-	 * @throws JsonSyntaxException if the response is not JSON or is invalid JSON
-	 */
-	public List<Query> getQueries() throws IOException
-	{
-		if (queries != null)
-			return queries;
+    /**
+     * Returns a list of query results returned by KairosDB. If status code is not
+     * successful, call getErrors to get errors returned.
+     *
+     * @return list of query results or empty list of no data or if an error is returned.
+     * @throws IOException         if could not map response to Queries object
+     * @throws JsonSyntaxException if the response is not JSON or is invalid JSON
+     */
+    public List<Query> getQueries() throws IOException {
+        if (queries != null)
+            return queries;
 
-		if (getBody() != null)
-		{
-			// We only get JSON if the response is a 200, 400 or 500 error
-			if (responseCode == 400 || responseCode == 500)
-			{
-				ErrorResponse errorResponse = JsonUtils.fromJson(body, ErrorResponse.class);
-				addErrors(errorResponse.getErrors());
-				return null;
-			}
-			else if (responseCode == 200)
-			{
-				KairosQueryResponse response = JsonUtils.fromJson(body, KairosQueryResponse.class);
-				return response.getQueries();
-			}
-		}
+        if (getBody() != null) {
+            // We only get JSON if the response is a 200, 400 or 500 error
+            if (responseCode == 400 || responseCode == 500) {
+                ErrorResponse errorResponse = JsonUtils.fromJson(body, ErrorResponse.class);
+                addErrors(errorResponse.getErrors());
+                return null;
+            } else if (responseCode == 200) {
+                KairosQueryResponse response = JsonUtils.fromJson(body, KairosQueryResponse.class);
+                return response.getQueries();
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
-	 * Returns the body response as a string.
-	 *
-	 * @return body as a string or empty string.
-	 */
-	public String getBody()
-	{
-		return body;
-	}
+    /**
+     * 对于单个查询，直接返回单个Query结果
+     *
+     * @return
+     */
+    public Query getSingleQuery() {
+        if (queries != null && queries.size() > 0 && (responseCode == 400 || responseCode == 500)) {
+            return queries.get(0);
+        }
+        return null;
+    }
 
-	public String getBody(InputStream stream) throws IOException
-	{
-		if (stream == null)
-			return "";
+    /**
+     * Returns the body response as a string.
+     *
+     * @return body as a string or empty string.
+     */
+    public String getBody() {
+        return body;
+    }
 
-		StringBuilder builder = new StringBuilder();
-		BufferedReader reader = null;
-		try
-		{
-			reader = new BufferedReader(new InputStreamReader(stream));
-			String line;
-			while ((line = reader.readLine()) != null)
-			{
-				builder.append(line);
-			}
-		}
-		finally
-		{
-			if (reader != null)
-				reader.close();
-		}
+    public String getBody(InputStream stream) throws IOException {
+        if (stream == null)
+            return "";
 
-		body = builder.toString();
-		return body;
-	}
+        StringBuilder builder = new StringBuilder();
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(stream));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line);
+            }
+        } finally {
+            if (reader != null)
+                reader.close();
+        }
 
-	public Query getQueryResponse(String metricName)
-		{
-		initializeMap();
-		return queriesMap.get(metricName);
-		}
+        body = builder.toString();
+        return body;
+    }
 
-	private void initializeMap()
-		{
-		synchronized (queriesMapLock)
-			{
-			if (queriesMap == null)
-				{
-				queriesMap = new HashMap<String, Query>();
-				for (Query query : queries)
-					{
-					//there will always be at least one result with the name
-					queriesMap.put(query.getResults().get(0).getName(), query);
-					}
-				}
-			}
-		}
+    public Query getQueryResponse(String metricName) {
+        initializeMap();
+        return queriesMap.get(metricName);
+    }
 
-	private class KairosQueryResponse
-	{
-		private List<Query> queries = new ArrayList<Query>();
+    private void initializeMap() {
+        synchronized (queriesMapLock) {
+            if (queriesMap == null) {
+                queriesMap = new HashMap<String, Query>();
+                for (Query query : queries) {
+                    //there will always be at least one result with the name
+                    queriesMap.put(query.getResults().get(0).getName(), query);
+                }
+            }
+        }
+    }
 
-		public List<Query> getQueries()
-		{
-			return queries;
-		}
-	}
+    private class KairosQueryResponse {
+        private List<Query> queries = new ArrayList<Query>();
+
+        public List<Query> getQueries() {
+            return queries;
+        }
+    }
 }
