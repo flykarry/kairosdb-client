@@ -308,6 +308,7 @@ public class AggregatorFactory {
      * @return
      */
     public static CustomAggregator createFilterAggregator(FilterOp filterOp, double threshold) {
+        checkNotNull(filterOp, "filterOp cannot be null");
         return new CustomAggregator("trim", "\"filter_op\":\"" + filterOp + "\",\"threshold\":\"" + threshold + "\"");
     }
 }
