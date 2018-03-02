@@ -29,7 +29,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Response returned by KairosDB.
  */
-public class QueryResponse extends Response {
+public class QueryResponse extends Response
+{
     private final int responseCode;
     private final Object queriesMapLock = new Object();
 
@@ -37,7 +38,8 @@ public class QueryResponse extends Response {
     private List<Query> queries;
     private String body;
 
-    public QueryResponse(int responseCode, InputStream stream) throws IOException {
+    public QueryResponse( int responseCode, InputStream stream) throws IOException
+    {
         super(responseCode);
         this.responseCode = responseCode;
         this.body = getBody(stream);
@@ -52,35 +54,28 @@ public class QueryResponse extends Response {
      * @throws IOException         if could not map response to Queries object
      * @throws JsonSyntaxException if the response is not JSON or is invalid JSON
      */
-    public List<Query> getQueries() throws IOException {
+    public List<Query> getQueries() throws IOException
+    {
         if (queries != null)
             return queries;
 
-        if (getBody() != null) {
+        if (getBody() != null)
+        {
             // We only get JSON if the response is a 200, 400 or 500 error
-            if (responseCode == 400 || responseCode == 500) {
+            if (responseCode == 400 || responseCode == 500)
+            {
                 ErrorResponse errorResponse = JsonUtils.fromJson(body, ErrorResponse.class);
                 addErrors(errorResponse.getErrors());
-                return null;
-            } else if (responseCode == 200) {
+                return Collections.emptyList();
+            }
+            else if (responseCode == 200)
+            {
                 KairosQueryResponse response = JsonUtils.fromJson(body, KairosQueryResponse.class);
                 return response.getQueries();
             }
         }
 
-        return null;
-    }
-
-    /**
-     * 对于单个查询，直接返回单个Query结果
-     *
-     * @return
-     */
-    public Query getSingleQuery() {
-        if (queries != null && queries.size() > 0 && (responseCode == 400 || responseCode == 500)) {
-            return queries.get(0);
-        }
-        return null;
+        return Collections.emptyList();
     }
 
     /**
@@ -88,23 +83,29 @@ public class QueryResponse extends Response {
      *
      * @return body as a string or empty string.
      */
-    public String getBody() {
+    public String getBody()
+    {
         return body;
     }
 
-    public String getBody(InputStream stream) throws IOException {
+    public String getBody(InputStream stream) throws IOException
+    {
         if (stream == null)
             return "";
 
         StringBuilder builder = new StringBuilder();
         BufferedReader reader = null;
-        try {
+        try
+        {
             reader = new BufferedReader(new InputStreamReader(stream));
             String line;
-            while ((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null)
+            {
                 builder.append(line);
             }
-        } finally {
+        }
+        finally
+        {
             if (reader != null)
                 reader.close();
         }
@@ -113,16 +114,21 @@ public class QueryResponse extends Response {
         return body;
     }
 
-    public Query getQueryResponse(String metricName) {
+    public Query getQueryResponse(String metricName)
+    {
         initializeMap();
         return queriesMap.get(metricName);
     }
 
-    private void initializeMap() {
-        synchronized (queriesMapLock) {
-            if (queriesMap == null) {
+    private void initializeMap()
+    {
+        synchronized (queriesMapLock)
+        {
+            if (queriesMap == null)
+            {
                 queriesMap = new HashMap<String, Query>();
-                for (Query query : queries) {
+                for (Query query : queries)
+                {
                     //there will always be at least one result with the name
                     queriesMap.put(query.getResults().get(0).getName(), query);
                 }
@@ -130,10 +136,12 @@ public class QueryResponse extends Response {
         }
     }
 
-    private class KairosQueryResponse {
+    private class KairosQueryResponse
+    {
         private List<Query> queries = new ArrayList<Query>();
 
-        public List<Query> getQueries() {
+        public List<Query> getQueries()
+        {
             return queries;
         }
     }

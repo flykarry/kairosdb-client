@@ -52,7 +52,7 @@ public class QueryTagResponse extends Response
 			{
 				ErrorResponse errorResponse = JsonUtils.fromJson(body, ErrorResponse.class);
 				addErrors(errorResponse.getErrors());
-				return null;
+				return Collections.emptyList();
 			}
 			else if (responseCode == 200)
 			{
@@ -61,18 +61,7 @@ public class QueryTagResponse extends Response
 			}
 		}
 
-		return null;
-	}
-
-	/**
-	 * 对于单个查询，直接返回单个Query结果
-	 * @return
-	 */
-	public TagQuery getSingleTagQuery() {
-		if (results != null && results.size() > 0) {
-			return results.get(0);
-		}
-		return null;
+		return Collections.emptyList();
 	}
 
 	/**
