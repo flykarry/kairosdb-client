@@ -15,7 +15,6 @@
  */
 package org.kairosdb.client.builder;
 
-import com.sun.istack.internal.NotNull;
 import org.kairosdb.client.builder.aggregator.CustomAggregator;
 import org.kairosdb.client.builder.aggregator.PercentileAggregator;
 import org.kairosdb.client.builder.aggregator.RateAggregator;
