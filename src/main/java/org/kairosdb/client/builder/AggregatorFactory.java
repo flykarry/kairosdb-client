@@ -303,12 +303,13 @@ public class AggregatorFactory {
 
     /**
      * 创建一个过滤聚合器
+     *
      * @param filterOp
      * @param threshold
      * @return
      */
     public static CustomAggregator createFilterAggregator(FilterOp filterOp, double threshold) {
         checkNotNull(filterOp, "filterOp cannot be null");
-        return new CustomAggregator("filter", "\"filter_op\":\"" + filterOp + "\",\"threshold\":\"" + threshold + "\"");
+        return new CustomAggregator("filter", "\"filter_op\":\"" + filterOp + "\",\"threshold\":" + threshold);
     }
 }
