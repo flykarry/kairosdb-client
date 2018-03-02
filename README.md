@@ -4,6 +4,7 @@
 3. 去掉通过创建url对象进行的url校验
 4. 更新所有jar包
 5. 若没有查到数据则getQuery方法返回null
+6. 实现kairosdb 1.2中所包含的Filter聚合方法
 
 KairosDB Client
 ================
